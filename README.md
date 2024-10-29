@@ -3,7 +3,7 @@
     <p style="text-align: center;">
 </p>
 
-# FastAPI - Lazada service gateway 
+# FastAPI - Banking Integration
 
 <span style="color:red;font-weight:700;font-size:50px">
     Tested on Windows
@@ -53,13 +53,13 @@ uvicorn main:app
 #### Containerize
 
 ```shell
- docker build -t lazada-gateway .
+ docker build -t banking-integration .
 ```
 
 #### Docker run
 
 ```shell
-docker run -d --name lazada-gateway -p 8000:8000 lazada-gateway                        
+docker run -d --name banking-integration -p 8000:8000 banking-integration                        
 ```
 
 ## Important Note:
