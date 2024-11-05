@@ -1,19 +1,47 @@
-import os
-
-from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from routers.acb import acb_router
 
-load_dotenv()
+from api.routers import tasks_router, users_router
+from be.env import allowed_hosts
 
-allowed_hosts = os.getenv('ALLOWED_HOSTS')
 app = FastAPI()
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
 
-app.include_router(acb_router)
+# Include routers
+
+
+"""
+Split routers for api clarity
+"""
+api_router = APIRouter(prefix='/api')
+api_router.include_router(tasks_router)
+api_router.include_router(users_router)
+app.include_router(api_router)
 
 
 @app.get("/")
+def main():
+    return {"task_management": {
+        "version": "1.0.0",
+        "author": "hieuhv"
+    }}
+
+
+@app.get('/api')
 def api_list():
-    return {"message": "Banking Integration Gateway - ver 1.0"}
+    return {
+            "api": {
+                "tasks": [
+                    "get_tasks",
+                    "create_task",
+                    "update_task",
+                    "delete_task"
+                ],
+                "users": [
+                    "get_users",
+                    "create_user",
+                    "update_user",
+                    "delete_user"
+                ]
+            }
+        }
