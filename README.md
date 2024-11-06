@@ -3,7 +3,7 @@
     <p style="text-align: center;">
 </p>
 
-# FastAPI - Task Management (Customore Case Study #1)
+# FastAPI 
 
 <span style="color:red;font-weight:700;font-size:50px">
     Tested on Windows
@@ -55,14 +55,14 @@ uvicorn main:app --reload
 ```
 
 ## Docker
-#### Containerize
+#### Making a Docker image
 ```shell
-docker build -t task-management .
+docker build -t <image_name> .
 ```
 
 #### Docker run
 ```shell
-docker run -d --name task-management -p 8000:8000 task-management                        
+docker run -d --name <image_name> -p 8000:8000 <container_name>                        
 ```
 `**DB port mapping is not available yet`
 
@@ -137,14 +137,6 @@ The flow would be something like this:
 4. The service then interacts with DB to perform read/write operation on the specified record
 5. The service then returns desired data to its router
 6. The router then deserializes returned data and response to User
-
-### Database design
-
-Every model created in this project is equipped with `created_at`, `updated_at` and `is_deleted` fields. The first 2 fields 
-will help ensuring data integrity and tracking changes over time while `is_deleted` is used to avoid missing indexes when deleting actual
-records in DB.
-
-The design is generated using draw.io: `task_management.drawio`
 
 ### The use of dotenv
 
