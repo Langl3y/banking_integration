@@ -1,13 +1,43 @@
 from fastapi import APIRouter, Depends
 from typing import Optional
+
+from fastapi.security import HTTPBasic, HTTPBasicCredentials, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from api.serializers import GetUserSerializer, CreateUserSerializer, UpdateUserSerializer, DeleteUserSerializer, UserResponseSerializer
+from api.common.utils import *
+from api.serializers import GetUserSerializer, CreateUserSerializer, UpdateUserSerializer, DeleteUserSerializer, UserResponseSerializer, GetTransactionInfo
 from api.services import UserService
 from api.common.responses import APIResponseCode
 from api.common.utils import get_db
 
 users_router = APIRouter(prefix="/users", tags=["users"])
+basic_security = HTTPBasic()
+
+
+@users_router.post('/authen', response_model=dict)
+async def generate_access_token(credentials: HTTPBasicCredentials = Depends(basic_security), db: Session = Depends(get_db)):
+    username = credentials.username
+    password = credentials.password
+
+    try:
+        user_service = UserService(db)
+        result = user_service.authenticate_user(username, password)
+
+        if result:
+            access_token_expires = timedelta(minutes=token_expires_in)
+            access_token = create_access_token(
+                data={"sub": username}, expires_delta=access_token_expires
+            )
+            return {
+                "access_token": access_token,
+                "token_type": "bearer",
+                "expires_in": token_expires_in,
+            }
+    except Exception as e:
+        return {
+            'response': APIResponseCode.SERVER_ERROR,
+            'error': str(e)
+        }
 
 
 @users_router.post('/get_users', response_model=dict)
@@ -20,7 +50,7 @@ async def get_users_router(data_body: Optional[GetUserSerializer] = None, db: Se
             username=data_body.username if data_body else None,
             created_at=data_body.created_at if data_body else None,
             updated_at=data_body.updated_at if data_body else None,
-            is_deleted=data_body.is_deleted if data_body else None
+            is_deleted=data_body.is_deleted if data_body else None,
         )
 
         user_responses = [UserResponseSerializer.from_orm(user) for user in result] if result else []
