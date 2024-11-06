@@ -1,21 +1,23 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Depends
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.security import HTTPBasic, HTTPBasicCredentials, OAuth2PasswordBearer
+from typing import Annotated
 
-from api.routers import tasks_router, users_router
+from api.routers import users_router, transactions_router
 from be.env import allowed_hosts
 
 app = FastAPI()
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
 
-# Include routers
 
+# Include routers
 
 """
 Split routers for api clarity
 """
 api_router = APIRouter(prefix='/api')
-api_router.include_router(tasks_router)
 api_router.include_router(users_router)
+api_router.include_router(transactions_router)
 app.include_router(api_router)
 
 
