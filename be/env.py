@@ -9,6 +9,9 @@ Load sensitive data from .env file
 """
 app_port = os.getenv('APP_PORT')
 allowed_hosts = os.getenv('ALLOWED_HOSTS')
+algorithm = os.getenv('ALGORITHM')
+secret = os.getenv('SECRET')
+token_expires_in = int(os.getenv('TOKEN_EXPIRES_IN_MINUTES'))
 
 db_manager = os.getenv('DB_MANAGER')
 db_user = os.getenv('DB_USER')
