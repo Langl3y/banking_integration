@@ -1,3 +1,4 @@
+from api.common.utils import *
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from api.models import User
@@ -6,6 +7,14 @@ from api.models import User
 class UserService:
     def __init__(self, db: Session):
         self.db = db
+
+    def authenticate_user(self, username: str, password: str):
+        query = self.db.query(User).filter(User.username == username)
+        result = bcrypt.checkpw(password.encode(), query.first().password.encode())
+
+        if result:
+            return True
+        return False
 
     def get_users(self, id=None, username=None, created_at=None, updated_at=None, is_deleted=None):
         query = self.db.query(User)
@@ -29,6 +38,10 @@ class UserService:
         return query.all()
 
     def create_user(self, data_body):
+        password = data_body.__dict__.get('password')
+        hashed_password = hash_password(password)
+        data_body.__dict__.update({'password': hashed_password})
+
         new_user = User(**data_body.dict())
         self.db.add(new_user)
         self.db.commit()
