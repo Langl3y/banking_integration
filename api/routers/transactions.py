@@ -1,12 +1,11 @@
-from datetime import datetime
 from fastapi import APIRouter, Depends
 from typing import Optional
 
-from fastapi.security import HTTPBasic, HTTPBasicCredentials, OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from api.common.utils import *
-from api.serializers import GetUserSerializer, CreateUserSerializer, UpdateUserSerializer, DeleteUserSerializer, UserResponseSerializer, GetTransactionInfo
+from api.serializers import GetTransactionInfo
 from api.services import TransactionService
 from api.common.responses import APIResponseCode
 from api.common.utils import get_db
@@ -40,6 +39,6 @@ async def transaction_sync(access_token: str = Depends(oauth2_scheme), data_body
     except Exception as e:
         return {
             'error': True,
-            'errorReason': APIResponseCode.SERVER_ERROR.get('code'),
-            'toastMessage': APIResponseCode.SERVER_ERROR.get('message'),
+            'errorReason': APIResponseCode.ALREADY_EXISTS.get('code'),
+            'toastMessage': APIResponseCode.ALREADY_EXISTS.get('message')
         }
