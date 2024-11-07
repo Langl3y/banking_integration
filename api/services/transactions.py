@@ -1,4 +1,4 @@
-from sqlalchemy import exc
+from psycopg2.errors import UniqueViolation
 from sqlalchemy.orm import Session
 from api.models import Transaction
 
@@ -27,9 +27,11 @@ class TransactionService:
         new_transaction = Transaction(**data)
         try:
             self.db.add(new_transaction)
-        except exc.DatabaseError as e:
-            raise e
-
+        except UniqueViolation as uv:
+            return {
+                "status": "error",
+                "message": uv
+            }
         self.db.commit()
         self.db.refresh(new_transaction)
         return new_transaction
