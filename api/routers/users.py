@@ -11,11 +11,11 @@ from api.common.responses import APIResponseCode
 from api.common.utils import get_db
 
 users_router = APIRouter(prefix="/users", tags=["users"])
-authen_router = APIRouter(prefix='')
+token_router = APIRouter(prefix='')
 basic_security = HTTPBasic()
 
 
-@authen_router.post('/token_generate', response_model=dict)
+@token_router.post('/token_generate', response_model=dict)
 async def generate_access_token(credentials: HTTPBasicCredentials = Depends(basic_security), db: Session = Depends(get_db)):
     username = credentials.username
     password = credentials.password
